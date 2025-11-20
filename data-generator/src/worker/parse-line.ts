@@ -10,10 +10,12 @@ export async function parseLine(line: string): Promise<any> {
     if ( (name + lastName).length === 0) {
         throw new Error('Name and LastName cannot be empty');
     } 
-    if ((name + lastName).length > 100) {
-        console.warn('Full name too long, truncating', { fullName: name + lastName });
-        name = name.substring(0, 50);
-        lastName = lastName.substring(0, 50);
+    
+    // Combine with space first, then truncate to exactly 100 chars
+    let fullName = name + ' ' + lastName;
+    if (fullName.length > 100) {
+        console.warn('Full name too long, truncating', { fullName });
+        fullName = fullName.substring(0, 100);
     }
     if (docStr.length === 0 || isNaN(parseInt(docStr, 10))) {
         throw new Error(`Invalid Document: ${docStr}`);
@@ -29,7 +31,7 @@ export async function parseLine(line: string): Promise<any> {
     }
     // Validar DNI?
     return {
-        fullName: name + lastName,
+        fullName: fullName,
         document: parseInt(docStr, 10),
         status: status,
         ingressDate: new Date(ingressDateStr),
